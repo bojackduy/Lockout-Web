@@ -5,7 +5,6 @@ import { getMatchSubmissions, type MatchSubmission } from '../game/submissions';
 import { addRecentMatch, loadDraft, loadLanguage, saveDraft, saveLanguage } from '../storage/localStore';
 import type { CodeLanguage, MatchConfig, ProblemRef, ScoreResult } from '../types';
 import { CodeEditor } from './CodeEditor';
-import { ProblemPreview } from './ProblemPreview';
 import { ProblemList } from './ProblemList';
 import { Scoreboard } from './Scoreboard';
 import { SubmissionFeed } from './SubmissionFeed';
@@ -100,6 +99,8 @@ export function MatchPage({ match, onExit }: Props) {
 
       <Scoreboard match={match} score={score} />
 
+      <SubmissionFeed submissions={submissions} loading={refreshing} />
+
       <section className="share-panel">
         <input value={shareUrl} readOnly onFocus={(event) => event.currentTarget.select()} />
         <button onClick={() => navigator.clipboard.writeText(shareUrl)}>Copy match link</button>
@@ -112,13 +113,7 @@ export function MatchPage({ match, onExit }: Props) {
       <div className="workspace">
         <ProblemList match={match} score={score} selectedProblem={selectedProblem} onSelectProblem={setSelectedProblem} />
 
-        <section className="dashboard-stack">
-          <div className="insight-grid">
-            <ProblemPreview match={match} problem={selectedProblem} score={score} />
-            <SubmissionFeed submissions={submissions} loading={refreshing} />
-          </div>
-
-          <section className="panel code-panel">
+        <section className="panel code-panel">
           <div className="editor-toolbar">
             <div>
               <p className="eyebrow">Battle station</p>
@@ -141,7 +136,6 @@ export function MatchPage({ match, onExit }: Props) {
             <button onClick={() => setCode(templates[language])}>Reset template</button>
             <span className="autosave">Draft autosaved locally</span>
           </div>
-          </section>
         </section>
       </div>
     </main>
