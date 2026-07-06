@@ -1,11 +1,14 @@
 import { useEffect, useMemo, useState } from 'react';
 import { problemKey, problemUrl } from '../api/codeforces';
 import { scoreMatch } from '../game/scoring';
+import { getMatchSubmissions, type MatchSubmission } from '../game/submissions';
 import { addRecentMatch, loadDraft, loadLanguage, saveDraft, saveLanguage } from '../storage/localStore';
 import type { CodeLanguage, MatchConfig, ProblemRef, ScoreResult } from '../types';
 import { CodeEditor } from './CodeEditor';
+import { ProblemPreview } from './ProblemPreview';
 import { ProblemList } from './ProblemList';
 import { Scoreboard } from './Scoreboard';
+import { SubmissionFeed } from './SubmissionFeed';
 import { Timer } from './Timer';
 
 const templates: Record<CodeLanguage, string> = {
@@ -25,6 +28,7 @@ export function MatchPage({ match, onExit }: Props) {
   const [language, setLanguage] = useState<CodeLanguage>(() => loadLanguage());
   const [code, setCode] = useState('');
   const [score, setScore] = useState<ScoreResult | null>(null);
+  const [submissions, setSubmissions] = useState<MatchSubmission[]>([]);
   const [refreshing, setRefreshing] = useState(false);
   const [error, setError] = useState<string | null>(null);
   const [copied, setCopied] = useState(false);
@@ -49,7 +53,9 @@ export function MatchPage({ match, onExit }: Props) {
     setRefreshing(true);
     setError(null);
     try {
-      setScore(await scoreMatch(match));
+      const [nextScore, nextSubmissions] = await Promise.all([scoreMatch(match), getMatchSubmissions(match)]);
+      setScore(nextScore);
+      setSubmissions(nextSubmissions);
     } catch (err) {
       setError(err instanceof Error ? err.message : 'Unable to refresh Codeforces submissions.');
     } finally {
@@ -106,7 +112,13 @@ export function MatchPage({ match, onExit }: Props) {
       <div className="workspace">
         <ProblemList match={match} score={score} selectedProblem={selectedProblem} onSelectProblem={setSelectedProblem} />
 
-        <section className="panel code-panel">
+        <section className="dashboard-stack">
+          <div className="insight-grid">
+            <ProblemPreview match={match} problem={selectedProblem} score={score} />
+            <SubmissionFeed submissions={submissions} loading={refreshing} />
+          </div>
+
+          <section className="panel code-panel">
           <div className="editor-toolbar">
             <div>
               <p className="eyebrow">Battle station</p>
@@ -129,6 +141,7 @@ export function MatchPage({ match, onExit }: Props) {
             <button onClick={() => setCode(templates[language])}>Reset template</button>
             <span className="autosave">Draft autosaved locally</span>
           </div>
+          </section>
         </section>
       </div>
     </main>

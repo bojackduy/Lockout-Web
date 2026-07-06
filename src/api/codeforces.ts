@@ -7,7 +7,11 @@ type ApiResponse<T> = {
 };
 
 export type CfSubmission = {
+  id: number;
   creationTimeSeconds: number;
+  programmingLanguage: string;
+  timeConsumedMillis: number;
+  memoryConsumedBytes: number;
   verdict?: string;
   problem: {
     contestId?: number;
