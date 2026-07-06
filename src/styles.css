@@ -178,7 +178,6 @@ button:disabled {
 
 .hero-chips span,
 .match-meta span,
-.copy-link-top,
 .ratings-preview b,
 .problem-main small b,
 .status-badge,
@@ -496,11 +495,34 @@ select:focus {
 .share-panel {
   margin-bottom: 1rem;
   padding: 1rem;
+  align-items: stretch;
+  display: grid;
+  grid-template-columns: auto minmax(0, 1fr) auto;
 }
 
 .share-panel input {
-  flex: 1;
   min-width: 220px;
+}
+
+.share-label {
+  display: grid;
+  gap: 0.2rem;
+  min-width: 170px;
+}
+
+.share-label span {
+  color: var(--text);
+  font-weight: 950;
+}
+
+.share-label small {
+  color: var(--muted);
+}
+
+.share-actions {
+  display: flex;
+  align-items: center;
+  gap: 0.7rem;
 }
 
 .last-checked {
@@ -789,6 +811,7 @@ select:focus {
   .match-nav,
   .editor-toolbar,
   .share-panel,
+  .share-actions,
   .recent-list a {
     align-items: stretch;
     flex-direction: column;

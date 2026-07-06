@@ -91,7 +91,6 @@ export function MatchPage({ match, onExit }: Props) {
       <header className="match-header">
         <div className="match-nav">
           <button className="ghost" onClick={onExit}>New match</button>
-          <button className="primary copy-link-top" onClick={copyMatchLink}>{linkCopied ? 'Link copied' : 'Copy match link'}</button>
           <div className="match-meta">
             <span>{match.problems.length} problems</span>
             <span>{match.durationMinutes} minutes</span>
@@ -110,10 +109,16 @@ export function MatchPage({ match, onExit }: Props) {
       <SubmissionFeed submissions={submissions} loading={refreshing} />
 
       <section className="share-panel">
+        <div className="share-label">
+          <span>Match link</span>
+          <small>Send this URL to your opponent</small>
+        </div>
         <input value={shareUrl} readOnly onFocus={(event) => event.currentTarget.select()} />
-        <button onClick={copyMatchLink}>{linkCopied ? 'Link copied' : 'Copy match link'}</button>
-        <button onClick={refreshScore} disabled={refreshing}>{refreshing ? 'Refreshing...' : 'Refresh score'}</button>
-        <span className="last-checked">Last checked: {lastChecked}</span>
+        <div className="share-actions">
+          <button className="primary" onClick={copyMatchLink}>{linkCopied ? 'Link copied' : 'Copy link'}</button>
+          <button onClick={refreshScore} disabled={refreshing}>{refreshing ? 'Refreshing...' : 'Refresh score'}</button>
+          <span className="last-checked">Last checked: {lastChecked}</span>
+        </div>
       </section>
 
       {error && <div className="error">{error}</div>}
