@@ -32,9 +32,17 @@ export function MatchPage({ match, onExit }: Props) {
   const [error, setError] = useState<string | null>(null);
   const [copied, setCopied] = useState(false);
   const [linkCopied, setLinkCopied] = useState(false);
+  const [resultDismissed, setResultDismissed] = useState(false);
   const shareUrl = useMemo(() => `${window.location.origin}${window.location.pathname}${window.location.hash}`, []);
   const selectedKey = problemKey(selectedProblem);
   const lastChecked = score ? new Date(score.updatedAt * 1000).toLocaleTimeString() : 'Not checked yet';
+  const result = score?.isOver
+    ? score.scores[0] === score.scores[1]
+      ? { title: 'Match drawn', subtitle: `${score.scores[0]} - ${score.scores[1]}`, winner: null }
+      : score.scores[0] > score.scores[1]
+        ? { title: `${match.players[0].handle} wins`, subtitle: `${score.scores[0]} - ${score.scores[1]}`, winner: match.players[0].handle }
+        : { title: `${match.players[1].handle} wins`, subtitle: `${score.scores[1]} - ${score.scores[0]}`, winner: match.players[1].handle }
+    : null;
 
   useEffect(() => {
     addRecentMatch(match);
@@ -105,6 +113,33 @@ export function MatchPage({ match, onExit }: Props) {
       </header>
 
       <Scoreboard match={match} score={score} />
+
+      {result && (
+        <section className="result-banner">
+          <div>
+            <p className="eyebrow">Final result</p>
+            <h2>{result.title}</h2>
+            <span>{result.subtitle}</span>
+          </div>
+          <button onClick={() => setResultDismissed(false)}>Show announcement</button>
+        </section>
+      )}
+
+      {result && !resultDismissed && (
+        <div className="result-modal" role="dialog" aria-modal="true" aria-labelledby="result-title">
+          <div className="result-card">
+            <p className="eyebrow">Lockout complete</p>
+            <h2 id="result-title">{result.title}</h2>
+            <strong>{result.subtitle}</strong>
+            <p>
+              {result.winner
+                ? `${result.winner} takes the match by first-solving the highest value objectives.`
+                : 'Both players finished with the same score.'}
+            </p>
+            <button className="primary" onClick={() => setResultDismissed(true)}>Back to dashboard</button>
+          </div>
+        </div>
+      )}
 
       <SubmissionFeed submissions={submissions} loading={refreshing} />
 
