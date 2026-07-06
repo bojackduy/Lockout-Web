@@ -31,6 +31,7 @@ export function MatchPage({ match, onExit }: Props) {
   const [refreshing, setRefreshing] = useState(false);
   const [error, setError] = useState<string | null>(null);
   const [copied, setCopied] = useState(false);
+  const [linkCopied, setLinkCopied] = useState(false);
   const shareUrl = useMemo(() => `${window.location.origin}${window.location.pathname}${window.location.hash}`, []);
   const selectedKey = problemKey(selectedProblem);
   const lastChecked = score ? new Date(score.updatedAt * 1000).toLocaleTimeString() : 'Not checked yet';
@@ -74,6 +75,12 @@ export function MatchPage({ match, onExit }: Props) {
     window.setTimeout(() => setCopied(false), 1400);
   }
 
+  async function copyMatchLink() {
+    await navigator.clipboard.writeText(shareUrl);
+    setLinkCopied(true);
+    window.setTimeout(() => setLinkCopied(false), 1400);
+  }
+
   function changeLanguage(next: CodeLanguage) {
     setLanguage(next);
     saveLanguage(next);
@@ -84,6 +91,7 @@ export function MatchPage({ match, onExit }: Props) {
       <header className="match-header">
         <div className="match-nav">
           <button className="ghost" onClick={onExit}>New match</button>
+          <button className="primary copy-link-top" onClick={copyMatchLink}>{linkCopied ? 'Link copied' : 'Copy match link'}</button>
           <div className="match-meta">
             <span>{match.problems.length} problems</span>
             <span>{match.durationMinutes} minutes</span>
@@ -103,7 +111,7 @@ export function MatchPage({ match, onExit }: Props) {
 
       <section className="share-panel">
         <input value={shareUrl} readOnly onFocus={(event) => event.currentTarget.select()} />
-        <button onClick={() => navigator.clipboard.writeText(shareUrl)}>Copy match link</button>
+        <button onClick={copyMatchLink}>{linkCopied ? 'Link copied' : 'Copy match link'}</button>
         <button onClick={refreshScore} disabled={refreshing}>{refreshing ? 'Refreshing...' : 'Refresh score'}</button>
         <span className="last-checked">Last checked: {lastChecked}</span>
       </section>
