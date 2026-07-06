@@ -17,8 +17,8 @@ export function CreateMatch({ onMatchCreated }: Props) {
   const [p1, setP1] = useState('');
   const [p2, setP2] = useState('');
   const [baseRating, setBaseRating] = useState(800);
-  const [problemCount, setProblemCount] = useState(5);
-  const [duration, setDuration] = useState(90);
+  const [problemCount, setProblemCount] = useState(3);
+  const [duration, setDuration] = useState(15);
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState<string | null>(null);
   const [recents, setRecents] = useState(() => loadRecentMatches());
@@ -110,7 +110,7 @@ export function CreateMatch({ onMatchCreated }: Props) {
             <label>
               Duration
               <select value={duration} onChange={(event) => setDuration(Number(event.target.value))}>
-                {[30, 45, 60, 90, 120, 180].map((minutes) => <option key={minutes} value={minutes}>{minutes} minutes</option>)}
+                {[15, 30, 45, 60, 90, 120, 180].map((minutes) => <option key={minutes} value={minutes}>{minutes} minutes</option>)}
               </select>
             </label>
           </div>

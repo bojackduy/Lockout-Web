@@ -12,6 +12,36 @@ import type { CodeLanguage } from '../types';
 
 const languageCompartment = new Compartment();
 
+const editorTheme = EditorView.theme({
+  '&': {
+    backgroundColor: '#0b1020',
+    color: '#e8edf5',
+  },
+  '.cm-content': {
+    caretColor: '#72f7d2',
+  },
+  '.cm-cursor, .cm-dropCursor': {
+    borderLeftColor: '#72f7d2',
+  },
+  '&.cm-focused .cm-selectionBackground, .cm-selectionBackground, .cm-content ::selection': {
+    backgroundColor: '#24436f',
+  },
+  '.cm-gutters': {
+    backgroundColor: '#090d1a',
+    borderRightColor: 'rgba(255, 255, 255, 0.08)',
+    color: '#64748b',
+  },
+  '.cm-activeLine': {
+    backgroundColor: 'rgba(114, 247, 210, 0.07)',
+  },
+  '.cm-activeLineGutter': {
+    backgroundColor: 'rgba(114, 247, 210, 0.09)',
+    color: '#cbd5e1',
+  },
+}, { dark: true });
+
+const syntaxTheme = syntaxHighlighting(defaultHighlightStyle, { fallback: true });
+
 function languageExtension(language: CodeLanguage) {
   if (language === 'python') return python();
   if (language === 'java') return java();
@@ -49,7 +79,8 @@ export function CodeEditor({ value, language, onChange }: Props) {
           bracketMatching(),
           autocompletion(),
           highlightActiveLine(),
-          syntaxHighlighting(defaultHighlightStyle),
+          editorTheme,
+          syntaxTheme,
           keymap.of([...defaultKeymap, ...historyKeymap, indentWithTab]),
           languageCompartment.of(languageExtension(language)),
           EditorView.lineWrapping,
